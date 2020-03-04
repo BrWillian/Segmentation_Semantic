@@ -4,7 +4,7 @@
 
 import tensorflow as tf
 from tensorflow.keras.callbacks import EarlyStopping, ReduceLROnPlateau, ModelCheckpoint, TensorBoard
-from model.model import unet_512
+from model.model import unet_128, unet_256
 import numpy as np
 import cv2
 import os
@@ -30,9 +30,9 @@ def train_generator():
             id_train_batch = data[start:end]
             for id in id_train_batch:
                 img = cv2.imread('input/train/{}.jpg'.format(id))
-                img = cv2.resize(img, (128, 128))
+                img = cv2.resize(img, (256, 256))
                 mask = cv2.imread('input/train_masks/{}_mask.png'.format(id), cv2.IMREAD_GRAYSCALE)
-                mask = cv2.resize(mask, (128, 128))
+                mask = cv2.resize(mask, (256, 256))
                 mask = np.expand_dims(mask, axis=2)
                 x_batch.append(img)
                 y_batch.append(mask)
@@ -52,9 +52,9 @@ def valid_generator():
             id_train_batch = data[start:end]
             for id in id_train_batch:
                 img = cv2.imread('input/valid/{}.jpg'.format(id))
-                img = cv2.resize(img, (128, 128))
+                img = cv2.resize(img, (256, 256))
                 mask = cv2.imread('input/valid_masks/{}_mask.png'.format(id), cv2.IMREAD_GRAYSCALE)
-                mask = cv2.resize(mask, (128, 128))
+                mask = cv2.resize(mask, (256, 256))
                 mask = np.expand_dims(mask, axis=2)
                 x_batch.append(img)
                 y_batch.append(mask)
@@ -78,5 +78,5 @@ callbacks = [EarlyStopping(monitor='val_loss',
 
 data_train = list_dir('input/train')
 data_valid = list_dir('input/valid')
-model = unet_512()
+model = unet_256()
 model.fit(train_generator(), callbacks=callbacks, verbose=1, epochs=300, steps_per_epoch=np.ceil(float(len(data_train)) / float(16)), validation_data=valid_generator(), validation_steps=np.ceil(float(len(data_valid)) / float(16)))
