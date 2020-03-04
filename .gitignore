@@ -1,1 +1,6 @@
 venv/
+input/
+logs/
+model/
+weights/
+

@@ -2,66 +2,114 @@
 @Author: Willian Antunes
 """
 import tensorflow as tf
-from tensorflow.keras.layers import Conv2D, Dropout, MaxPooling2D, Conv2DTranspose, concatenate, Input, Lambda
-from tensorflow.keras.optimizers import RMSprop
+from tensorflow.keras.models import Model
+from tensorflow.keras.layers import Conv2D, Dropout, MaxPooling2D, Conv2DTranspose, concatenate, Input, UpSampling2D, BatchNormalization, Activation
+from tensorflow.keras.optimizers import RMSprop, Adam
 
-def get_unet_512(input_shape=(512, 512, 3)):
+def unet_512(input_shape=(128, 128, 3)):
 
     inputs = Input(shape=input_shape)
-    s = Lambda(lambda x: x / 255)(inputs)
 
-    c1 = Conv2D(16, (3, 3), activation='relu', kernel_initializer='he_normal', padding='same')(s)
-    c1 = Dropout(0.1)(c1)
-    c1 = Conv2D(16, (3, 3), activation='relu', kernel_initializer='he_normal', padding='same')(c1)
-    p1 = MaxPooling2D((2, 2))(c1)
+    down1 = Conv2D(64, (3, 3), padding='same')(inputs)
+    down1 = BatchNormalization()(down1)
+    down1 = Activation('relu')(down1)
+    down1 = Conv2D(64, (3, 3), padding='same')(down1)
+    down1 = BatchNormalization()(down1)
+    down1 = Activation('relu')(down1)
+    down1_pool = MaxPooling2D((2, 2), strides=(2, 2))(down1)
+    # 64
 
-    c2 = Conv2D(32, (3, 3), activation='relu', kernel_initializer='he_normal', padding='same')(p1)
-    c2 = Dropout(0.1)(c2)
-    c2 = Conv2D(32, (3, 3), activation='relu', kernel_initializer='he_normal', padding='same')(c2)
-    p2 = MaxPooling2D((2, 2))(c2)
+    down2 = Conv2D(128, (3, 3), padding='same')(down1_pool)
+    down2 = BatchNormalization()(down2)
+    down2 = Activation('relu')(down2)
+    down2 = Conv2D(128, (3, 3), padding='same')(down2)
+    down2 = BatchNormalization()(down2)
+    down2 = Activation('relu')(down2)
+    down2_pool = MaxPooling2D((2, 2), strides=(2, 2))(down2)
+    # 32
 
-    c3 = Conv2D(64, (3, 3), activation='relu', kernel_initializer='he_normal', padding='same')(p2)
-    c3 = Dropout(0.1)(c3)
-    c3 = Conv2D(64, (3, 3), activation='relu', kernel_initializer='he_normal', padding='same')(c3)
-    p3 = MaxPooling2D((2, 2))(c3)
+    down3 = Conv2D(256, (3, 3), padding='same')(down2_pool)
+    down3 = BatchNormalization()(down3)
+    down3 = Activation('relu')(down3)
+    down3 = Conv2D(256, (3, 3), padding='same')(down3)
+    down3 = BatchNormalization()(down3)
+    down3 = Activation('relu')(down3)
+    down3_pool = MaxPooling2D((2, 2), strides=(2, 2))(down3)
+    # 16
 
-    c4 = Conv2D(128, (3, 3), activation='relu', kernel_initializer='he_normal', padding='same')(p3)
-    c4 = Dropout(0.2)(c4)
-    c4 = Conv2D(128, (3, 3), activation='relu', kernel_initializer='he_normal', padding='same')(c4)
-    p4 = MaxPooling2D((2, 2))(c4)
+    down4 = Conv2D(512, (3, 3), padding='same')(down3_pool)
+    down4 = BatchNormalization()(down4)
+    down4 = Activation('relu')(down4)
+    down4 = Conv2D(512, (3, 3), padding='same')(down4)
+    down4 = BatchNormalization()(down4)
+    down4 = Activation('relu')(down4)
+    down4_pool = MaxPooling2D((2, 2), strides=(2, 2))(down4)
+    # 8
 
-    c5 = Conv2D(256, (3, 3), activation='relu', kernel_initializer='he_normal', padding='same')(p4)
-    c5 = Dropout(0.3)(c5)
-    c5 = Conv2D(256, (3, 3), activation='relu', kernel_initializer='he_normal', padding='same')(c5)
+    center = Conv2D(1024, (3, 3), padding='same')(down4_pool)
+    center = BatchNormalization()(center)
+    center = Activation('relu')(center)
+    center = Conv2D(1024, (3, 3), padding='same')(center)
+    center = BatchNormalization()(center)
+    center = Activation('relu')(center)
+    # center
 
-    #Expensive path
-    u6 = Conv2DTranspose(128,(2, 2), strides=(2, 2), padding='same')(c5)
-    u6 = concatenate([u6, c4])
-    c6 = Conv2D(128, (3, 3), activation='relu', kernel_initializer='he_normal', padding='same')(u6)
-    c6 = Dropout(0.2)(c6)
-    c6 = Conv2D(128, (3, 3), activation='relu', kernel_initializer='he_normal', padding='same')(c6)
+    up4 = UpSampling2D((2, 2))(center)
+    up4 = concatenate([down4, up4], axis=3)
+    up4 = Conv2D(512, (3, 3), padding='same')(up4)
+    up4 = BatchNormalization()(up4)
+    up4 = Activation('relu')(up4)
+    up4 = Conv2D(512, (3, 3), padding='same')(up4)
+    up4 = BatchNormalization()(up4)
+    up4 = Activation('relu')(up4)
+    up4 = Conv2D(512, (3, 3), padding='same')(up4)
+    up4 = BatchNormalization()(up4)
+    up4 = Activation('relu')(up4)
+    # 16
 
-    u7 = Conv2DTranspose(64, (2, 2), strides=(2, 2), padding='same')(c6)
-    u7 = concatenate([u7, c3])
-    c7 = Conv2D(64, (3, 3), activation='relu', kernel_initializer='he_normal', padding='same')(u7)
-    c7 = Dropout(0.2)(c7)
-    c7 = Conv2D(64, (3, 3), activation='relu', kernel_initializer='he_normal', padding='same')(c7)
+    up3 = UpSampling2D((2, 2))(up4)
+    up3 = concatenate([down3, up3], axis=3)
+    up3 = Conv2D(256, (3, 3), padding='same')(up3)
+    up3 = BatchNormalization()(up3)
+    up3 = Activation('relu')(up3)
+    up3 = Conv2D(256, (3, 3), padding='same')(up3)
+    up3 = BatchNormalization()(up3)
+    up3 = Activation('relu')(up3)
+    up3 = Conv2D(256, (3, 3), padding='same')(up3)
+    up3 = BatchNormalization()(up3)
+    up3 = Activation('relu')(up3)
+    # 32
 
-    u8 = Conv2DTranspose(32, (2, 2), strides=(2, 2), padding='same')(c7)
-    u8 = concatenate([u8, c2])
-    c8 = Conv2D(32, (3, 3), activation='relu', kernel_initializer='he_normal', padding='same')(u8)
-    c8 = Dropout(0.1)(c8)
-    c8 = Conv2D(32, (3, 3), activation='relu', kernel_initializer='he_normal', padding='same')(c8)
+    up2 = UpSampling2D((2, 2))(up3)
+    up2 = concatenate([down2, up2], axis=3)
+    up2 = Conv2D(128, (3, 3), padding='same')(up2)
+    up2 = BatchNormalization()(up2)
+    up2 = Activation('relu')(up2)
+    up2 = Conv2D(128, (3, 3), padding='same')(up2)
+    up2 = BatchNormalization()(up2)
+    up2 = Activation('relu')(up2)
+    up2 = Conv2D(128, (3, 3), padding='same')(up2)
+    up2 = BatchNormalization()(up2)
+    up2 = Activation('relu')(up2)
+    # 64
 
-    u9 = Conv2DTranspose(16, (2, 2), strides=(2, 2), padding='same')(c8)
-    u9 = concatenate([u9, c1], axis=3)
-    c9 = Conv2D(16, (3, 3), activation='relu', kernel_initializer='he_normal', padding='same')(u9)
-    c9 = Dropout(0.1)(c9)
-    c9 = Conv2D(16, (3, 3), activation='relu', kernel_initializer='he_normal', padding='same')(c9)
+    up1 = UpSampling2D((2, 2))(up2)
+    up1 = concatenate([down1, up1], axis=3)
+    up1 = Conv2D(64, (3, 3), padding='same')(up1)
+    up1 = BatchNormalization()(up1)
+    up1 = Activation('relu')(up1)
+    up1 = Conv2D(64, (3, 3), padding='same')(up1)
+    up1 = BatchNormalization()(up1)
+    up1 = Activation('relu')(up1)
+    up1 = Conv2D(64, (3, 3), padding='same')(up1)
+    up1 = BatchNormalization()(up1)
+    up1 = Activation('relu')(up1)
+    # 128
 
-    outputs = Conv2D(1, (1, 1), activation='sigmoid')(c9)
+    classify = Conv2D(1, (1, 1), activation='sigmoid')(up1)
 
-    model = tf.keras.Model(inputs=[inputs], outputs=[outputs])
-    model.compile(optimizer=RMSprop(lr=0.0001), loss='binary_crossentropy', metrics=['accuracy'])
+    model = Model(inputs=inputs, outputs=classify)
+
+    model.compile(optimizer=Adam(lr=0.00001), loss = 'binary_crossentropy', metrics=['accuracy'])
 
     return model
