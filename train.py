@@ -72,11 +72,12 @@ callbacks = [EarlyStopping(monitor='val_loss',
              ModelCheckpoint(monitor='val_loss',
                              filepath='weights/best_weights.hdf5',
                              save_best_only=True,
-                             save_weights_only=True),
+                             save_weights_only=True,
+                             verbose=1),
              TensorBoard(log_dir='logs')]
 
 
 data_train = list_dir('input/train')
 data_valid = list_dir('input/valid')
 model = unet_256()
-model.fit(train_generator(), callbacks=callbacks, verbose=1, epochs=300, steps_per_epoch=np.ceil(float(len(data_train)) / float(16)), validation_data=valid_generator(), validation_steps=np.ceil(float(len(data_valid)) / float(16)))
+model.fit(train_generator(), callbacks=callbacks, verbose=1, epochs=30, steps_per_epoch=np.ceil(float(len(data_train)) / float(16)), validation_data=valid_generator(), validation_steps=np.ceil(float(len(data_valid)) / float(16)))
