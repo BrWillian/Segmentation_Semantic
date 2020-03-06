@@ -24,33 +24,38 @@ def verify_dir():
 
 def list_dir(dir):
     data = []
-    count = -1
     for _, _, files in os.walk(dir):
         for file in files:
             data.append(file)
-            count += 1
 
     data = list(map(lambda s: s.split('.')[0], data))
 
-    return data, count
+    return data
 
 
 def pre_processing():
-    data_train, n_train = list_dir(train_dir)
-    data_mask, n_masks = list_dir(train_masks_dir)
-    gen = simple_generator()
-
-    if n_train != n_masks:
-        print('WARNING: There are more masks or images')
-        return
+    data_train = list_dir(train_dir)
+    data_mask = list_dir(train_masks_dir)
+    valid = list_dir(valid_dir)
+    valid_mask = list_dir(valid_mask_dir)
+    gen_train = simple_generator()
+    gen_valid = simple_generator()
 
     data_train = sorted(data_train)
     data_mask = sorted(data_mask)
 
-    for x,y in zip(data_train, data_mask):
-        id = next(gen)
+    valid = sorted(valid)
+    valid_mask = sorted(valid_mask)
+
+    for x, y in zip(data_train, data_mask):
+        id = next(gen_train)
         os.rename(train_dir + x + '.jpg', train_dir + 'img_{}.jpg'.format(id))
         os.rename(train_masks_dir + y + '.png', train_masks_dir + 'img_{}_mask.png'.format(id))
+
+    for x, y in zip(valid, valid_mask):
+        id = next(gen_valid)
+        os.rename(valid_dir + x + '.jpg', valid_dir + 'img_{}.jpg'.format(id))
+        os.rename(valid_mask_dir + y + '.png', valid_mask_dir + 'img_{}_mask.png'.format(id))
 
 
 if __name__ == '__main__':
