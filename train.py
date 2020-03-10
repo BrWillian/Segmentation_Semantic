@@ -8,7 +8,6 @@ from model.model import unet_128, unet_256
 import numpy as np
 import cv2
 import os
-from tensorflow.keras.
 
 def list_dir(dir):
     data = []
@@ -85,4 +84,4 @@ callbacks = [EarlyStopping(monitor='val_loss',
 data_train = list_dir('input/train')
 data_valid = list_dir('input/valid')
 model = unet_256()
-model.fit(train_generator(), callbacks=callbacks, verbose=1, epochs=30, steps_per_epoch=np.ceil(float(len(data_train)) / float(16)), validation_data=valid_generator(), validation_steps=np.ceil(float(len(data_valid)) / float(16)))
+model.fit(train_generator(), callbacks=callbacks, verbose=1, epochs=200, steps_per_epoch=np.ceil(float(len(data_train)) / float(16)), validation_data=valid_generator(), validation_steps=np.ceil(float(len(data_valid)) / float(16)))
