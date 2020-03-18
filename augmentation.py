@@ -49,7 +49,7 @@ def randomShiftScaleRotate(image, mask, shift_limit=(-0.0625, 0.0625), scale_lim
     return image, mask
 
 
-def train_generator():
+def aug_generator():
     data = list_dir('input/train')
     data = [int(val) for val in data]
     data = sorted(data)
@@ -84,4 +84,4 @@ def train_generator():
 
 
 if __name__ == "__main__":
-    train_generator()
+    aug_generator()
