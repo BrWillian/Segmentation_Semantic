@@ -1,7 +1,6 @@
 import os
 import cv2
 import numpy as np
-from tqdm import tqdm
 from model.model import unet_256
 
 model = unet_256()

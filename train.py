@@ -21,6 +21,7 @@ def list_dir(dir):
 
 def train_generator():
     data = list_dir('input/train')
+    data = sorted(data)
     while True:
         for start in range(0, len(data), 16):  # 16 = Batch Size
             x_batch = []
@@ -28,7 +29,7 @@ def train_generator():
             end = min(start + 16, len(data))
             id_train_batch = data[start:end]
             for id in id_train_batch:
-                img = cv2.imread('input/train/{}.jpg'.format(id))
+                img = cv2.imread('input/train/{}.jpeg'.format(id))
                 img = cv2.resize(img, (256, 256))
                 mask = cv2.imread('input/train_masks/{}_mask.png'.format(id), cv2.IMREAD_GRAYSCALE)
                 mask = cv2.resize(mask, (256, 256))
@@ -50,7 +51,7 @@ def valid_generator():
             end = min(start + 16, len(data))
             id_train_batch = data[start:end]
             for id in id_train_batch:
-                img = cv2.imread('input/valid/{}.jpg'.format(id))
+                img = cv2.imread('input/valid/{}.jpeg'.format(id))
                 img = cv2.resize(img, (256, 256))
                 mask = cv2.imread('input/valid_masks/{}_mask.png'.format(id), cv2.IMREAD_GRAYSCALE)
                 mask = cv2.resize(mask, (256, 256))

@@ -6,7 +6,7 @@ import os
 
 
 def simple_generator():
-    i = 0
+    i = 756
     while True:
         i += 1
         yield i
@@ -32,6 +32,7 @@ def list_dir(dir):
             data.append(file)
 
     data = list(map(lambda s: s.split('.')[0], data))
+    data = list(map(lambda s: s.split('img_0')[-1], data))
 
     return data
 
@@ -45,21 +46,30 @@ def pre_processing():
     gen_train = simple_generator()
     gen_valid = simple_generator()
 
+
+    data_train = list(map(lambda s: s.split('img_')[-1], data_train))
+    data_train = [int(val) for val in data_train]
     data_train = sorted(data_train)
+
+    data_mask = list(map(lambda s: s.split('_mask')[0], data_mask))
+    data_mask = list(map(lambda s: s.split('img_')[-1], data_mask))
+    data_mask = [int(val) for val in data_mask]
     data_mask = sorted(data_mask)
+    #print(data_mask)
 
     valid = sorted(valid)
     valid_mask = sorted(valid_mask)
 
+
     for x, y in zip(data_train, data_mask):
         id = next(gen_train)
-        os.rename(train_dir + x + '.jpg', train_dir + 'img_{}.jpg'.format(id))
-        os.rename(train_masks_dir + y + '.png', train_masks_dir + 'img_{}_mask.png'.format(id))
+        os.rename(train_dir + 'img_' + str(x) + '.jpg', train_dir + '{}.jpg'.format(id))
+        os.rename(train_masks_dir + 'img_' + str(y) + '_mask.png', train_masks_dir + '{}_mask.png'.format(id))
 
-    for x, y in zip(valid, valid_mask):
-        id = next(gen_valid)
-        os.rename(valid_dir + x + '.jpg', valid_dir + 'img_{}.jpg'.format(id))
-        os.rename(valid_masks_dir + y + '.png', valid_masks_dir + 'img_{}_mask.png'.format(id))
+    #for x, y in zip(valid, valid_mask):
+    #    id = next(gen_valid)
+    #    os.rename(valid_dir + x + '.png', valid_dir + 'img_0{}.png'.format(id))
+    #    os.rename(valid_masks_dir + y + '.png', valid_masks_dir + 'img_0{}_mask.png'.format(id))
 
 
 if __name__ == '__main__':
