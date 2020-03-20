@@ -29,7 +29,7 @@ def train_generator():
             end = min(start + 16, len(data))
             id_train_batch = data[start:end]
             for id in id_train_batch:
-                img = cv2.imread('input/train/{}.jpeg'.format(id))
+                img = cv2.imread('input/train/{}.jpg'.format(id))
                 img = cv2.resize(img, (256, 256))
                 mask = cv2.imread('input/train_masks/{}_mask.png'.format(id), cv2.IMREAD_GRAYSCALE)
                 mask = cv2.resize(mask, (256, 256))
@@ -51,7 +51,7 @@ def valid_generator():
             end = min(start + 16, len(data))
             id_train_batch = data[start:end]
             for id in id_train_batch:
-                img = cv2.imread('input/valid/{}.jpeg'.format(id))
+                img = cv2.imread('input/valid/{}.jpg'.format(id))
                 img = cv2.resize(img, (256, 256))
                 mask = cv2.imread('input/valid_masks/{}_mask.png'.format(id), cv2.IMREAD_GRAYSCALE)
                 mask = cv2.resize(mask, (256, 256))
@@ -70,15 +70,16 @@ def verify_model(n=0):
     return 'weights/best_weights_{}.hdf5'.format(n)
 
 
-callbacks = [EarlyStopping(monitor='val_loss',
-                           patience=8,
-                           verbose=1,
-                           min_delta=1e-4),
-             ModelCheckpoint(monitor='val_loss',
+callbacks = [ModelCheckpoint(monitor='val_loss',
                              filepath=verify_model(),
                              save_best_only=True,
                              save_weights_only=True,
                              verbose=1),
+             ReduceLROnPlateau(monitor='val_loss',
+                               factor=0.1,
+                               patience=4,
+                               verbose=1,
+                               epsilon=1e-4),
              TensorBoard(log_dir='logs')]
 
 

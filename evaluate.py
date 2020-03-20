@@ -18,7 +18,7 @@ def list_dir(dir):
 
 
 def test_generator():
-    data = list_dir('input/test')
+    data = list_dir('input/valid')
     while True:
         for start in range(0, len(data), 16):  # 16 = Batch Size
             x_batch = []
@@ -26,9 +26,9 @@ def test_generator():
             end = min(start + 16, len(data))
             id_train_batch = data[start:end]
             for id in id_train_batch:
-                img = cv2.imread('input/test/{}.jpg'.format(id))
+                img = cv2.imread('input/valid/{}.jpg'.format(id))
                 img = cv2.resize(img, (256, 256))
-                mask = cv2.imread('input/test_masks/{}_mask.png'.format(id), cv2.IMREAD_GRAYSCALE)
+                mask = cv2.imread('input/valid_masks/{}_mask.png'.format(id), cv2.IMREAD_GRAYSCALE)
                 mask = cv2.resize(mask, (256, 256))
                 mask = np.expand_dims(mask, axis=2)
                 x_batch.append(img)
@@ -39,7 +39,7 @@ def test_generator():
             yield x_batch, y_batch
 
 def evaluate():
-    model.load_weights(filepath='weights/best_weights_2.hdf5')
+    model.load_weights(filepath='weights/best_weights_1.hdf5')
     model.evaluate_generator(test_generator(), verbose=1)
 
 

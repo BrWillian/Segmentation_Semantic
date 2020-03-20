@@ -37,10 +37,6 @@ def weighted_dice_loss(y_true, y_pred):
         kernel_size = 11
     elif K.int_shape(y_pred)[1] == 256:
         kernel_size = 21
-    elif K.int_shape(y_pred)[1] == 512:
-        kernel_size = 21
-    elif K.int_shape(y_pred)[1] == 1024:
-        kernel_size = 41
     else:
         raise ValueError('Unexpected image size')
     averaged_mask = K.pool2d(
@@ -75,10 +71,6 @@ def weighted_bce_dice_loss(y_true, y_pred):
         kernel_size = 11
     elif K.int_shape(y_pred)[1] == 256:
         kernel_size = 21
-    elif K.int_shape(y_pred)[1] == 512:
-        kernel_size = 21
-    elif K.int_shape(y_pred)[1] == 1024:
-        kernel_size = 41
     else:
         raise ValueError('Unexpected image size')
     averaged_mask = K.pool2d(
