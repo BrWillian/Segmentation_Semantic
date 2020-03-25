@@ -6,7 +6,7 @@ import os
 
 
 def simple_generator():
-    i = 756
+    i = 0
     while True:
         i += 1
         yield i

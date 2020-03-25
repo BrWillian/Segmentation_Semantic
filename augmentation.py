@@ -37,7 +37,7 @@ def aug_generator():
     data = [int(val) for val in data]
     data = sorted(data)
     gen = simple_generator()
-    x = 5
+    x = 6
     while x:
         for start in range(0, len(data), 1):  # 16 = Batch Size
             end = min(start + 1, len(data))
@@ -45,17 +45,16 @@ def aug_generator():
             for id in id_train_batch:
                 img = cv2.imread('input/train/{}.jpg'.format(id))
                 mask = cv2.imread('input/train_masks/{}_mask.png'.format(id), cv2.IMREAD_GRAYSCALE)
-                img = cv2.resize(img, (625, 400))
-                img = img[47:417, ]
+                img = cv2.resize(img, (625, 353))
+                img = img[47:336, ]
 
                 img = cv2.resize(img, (512, 256))
                 mask = cv2.resize(mask, (512, 256))
                 mask = np.expand_dims(mask, axis=2)
                 img = randomHueSaturationValue(img,
-                                               hue_shift_limit=(np.random.uniform(-25, -75), np.random.uniform(25, 75)),
-                                               sat_shift_limit=(np.random.uniform(-10, 0), np.random.uniform(0, 10)),
-                                               val_shift_limit=(np.random.uniform(-30, 0), np.random.uniform(0, 30)))
-                #img, mask = randomShiftScaleRotate(img, mask, shift_limit=(np.random.uniform(-0.0625, -0.0725), np.random.uniform(0.0625, 0.0725)), scale_limit=(np.random.uniform(-0.1, -0.5), np.random.uniform(0.1, 0.5)), rotate_limit=(-0, 0))
+                                               hue_shift_limit=(np.random.uniform(-25, -100), np.random.uniform(25, 100)),
+                                               sat_shift_limit=(np.random.uniform(-20, 0), np.random.uniform(0, 20)),
+                                               val_shift_limit=(np.random.uniform(-45, 0), np.random.uniform(0, 45)))
                 img, mask = randomHorizontalFlip(img, mask)
                 id_x = next(gen)
                 cv2.imwrite('input/aug/{}.jpg'.format(id_x), img)

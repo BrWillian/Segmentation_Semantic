@@ -2,7 +2,6 @@
 @Author: Willian Antunes
 """
 
-import tensorflow as tf
 from tensorflow.keras.callbacks import EarlyStopping, ReduceLROnPlateau, ModelCheckpoint, TensorBoard
 from model.model import unet_128, unet_256
 import numpy as np
@@ -75,12 +74,7 @@ callbacks = [ModelCheckpoint(monitor='val_loss',
                              save_best_only=True,
                              save_weights_only=True,
                              verbose=1),
-             ReduceLROnPlateau(monitor='val_loss',
-                               factor=0.1,
-                               patience=4,
-                               verbose=1,
-                               epsilon=1e-4),
-             TensorBoard(log_dir='logs')]
+            TensorBoard(log_dir='logs')]
 
 
 data_train = list_dir('input/train')

@@ -54,9 +54,9 @@ def list_dir_1(dir):
     return data
 
 def delete():
-    masks = list_dir_1('/home/willian/Downloads/masks')
+    masks = list_dir_1('/home/willian/Downloads/masks/')
 
-    images = list_dir_1('/home/willian/Downloads/imagens')
+    images = list_dir_1('/home/willian/Downloads/imgs/')
 
     masks = sorted(masks)
     images = sorted(images)
@@ -66,7 +66,7 @@ def delete():
 
     for i in images:
         if i not in masks:
-            os.remove('/home/willian/Downloads/imagens/'+i+'.jpeg')
+            os.remove('/home/willian/Downloads/imgs/'+i+'.jpg')
 
 
 delete()

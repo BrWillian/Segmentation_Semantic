@@ -242,6 +242,6 @@ def unet_256(input_shape=(256, 256, 3)):
 
     model = Model(inputs=inputs, outputs=classify)
 
-    model.compile(optimizer=RMSprop(lr=0.0001), loss=bce_dice_loss, metrics=[dice_coeff])
+    model.compile(optimizer=Adam(lr=0.001), loss=bce_dice_loss, metrics=[dice_coeff])
 
     return model
