@@ -37,7 +37,17 @@ def predict(img, output_size=(512, 256)):
 
     preds = cv2.resize(preds, output_size)
 
-    cv2.imwrite('predict/' + str(img_name[0]) + '_predict.png', preds)
+    p1 = preds[:, 0:172]
+
+    p2 = preds[:, 172:342]
+
+    p3 = preds[:, 342:512]
+
+    cv2.imwrite('predict/new_predict/' + str(img_name[0]) + '_predict.png', preds)
+    #cv2.imwrite('predict/' + str(img_name[0]) + '_predict_left.png', p1)
+    #cv2.imwrite('predict/' + str(img_name[0]) + '_predict_center.png', p2)
+    #cv2.imwrite('predict/' + str(img_name[0]) + '_predict_right.png', p3)
+
 
 
 
@@ -46,8 +56,7 @@ def predict(img, output_size=(512, 256)):
 
 
 if __name__ == "__main__":
-    predict('predict/6.jpeg')
-    predict('predict/7.jpeg')
-    predict('predict/8.jpeg')
-    predict('predict/9.jpeg')
-    predict('predict/10.jpeg')
+    predict('predict/new_predict/moto3.jpeg')
+
+
+

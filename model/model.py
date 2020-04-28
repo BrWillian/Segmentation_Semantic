@@ -1,10 +1,13 @@
+
 """
 @Author: Willian Antunes
 """
 import tensorflow as tf
 from tensorflow.keras.models import Model
-from tensorflow.keras.layers import Conv2D, Dropout, MaxPooling2D, Conv2DTranspose, concatenate, Input, UpSampling2D, BatchNormalization, Activation
+from tensorflow.keras.layers import Conv2D, Dropout, MaxPooling2D, Conv2DTranspose, concatenate, Input, UpSampling2D, BatchNormalization, Activation, SpatialDropout2D
 from tensorflow.keras.optimizers import RMSprop, Adam
+from tensorflow.keras.applications import VGG16
+from tensorflow.keras.applications.resnet50 import ResNet50
 
 from model.losses import bce_dice_loss, dice_loss, weighted_bce_dice_loss, weighted_dice_loss, dice_coeff
 
@@ -112,7 +115,7 @@ def unet_128(input_shape=(128, 128, 3)):
 
     model = Model(inputs=inputs, outputs=classify)
 
-    model.compile(optimizer=Adam(lr=0.00001), loss = 'binary_crossentropy', metrics=['accuracy'])
+    model.compile(optimizer=RMSprop(lr=0.0001), loss=bce_dice_loss, metrics=[dice_coeff])
 
     return model
 

@@ -1,7 +1,6 @@
 import cv2
 import os
 import sys
-from matplotlib import pyplot as plt
 from itertools import product
 from pre_processing import list_dir, simple_generator
 
@@ -16,12 +15,12 @@ def dirs():
 def pre_processing():
     train_dir, train_masks_dir = dirs()
     train_masks_dir = '/home/willian/Downloads/masks/'
-    data_train = list_dir(train_dir)
+    #data_train = list_dir(train_dir)
     data_mask = list_dir('/home/willian/Downloads/masks/')
     gen_train = simple_generator()
 
 
-    data_train = sorted(data_train)
+    #data_train = sorted(data_train)
     data_mask = sorted(data_mask)
 
 
@@ -32,12 +31,12 @@ def pre_processing():
 
 
 def make_masks():
-    images = []
+    #images = []
     masks_dir = list_dir('/home/willian/Downloads/masks/')
     for x in masks_dir:
         img = '/home/willian/Downloads/masks/'+x+'.png'
         img = cv2.imread(img, cv2.IMREAD_GRAYSCALE)
-        cropped_image = img[47:417, ]
+        cropped_image = img[40:386, ]
         _, img = cv2.threshold(cropped_image, 5, 255, cv2.THRESH_BINARY)
         cv2.imwrite('/home/willian/Downloads/masks/'+x+'_mask.png', img)
 
@@ -69,4 +68,4 @@ def delete():
             os.remove('/home/willian/Downloads/imgs/'+i+'.jpg')
 
 
-delete()
+make_masks()
