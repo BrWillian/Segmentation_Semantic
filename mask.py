@@ -36,9 +36,9 @@ def make_masks():
     for x in masks_dir:
         img = '/home/willian/Downloads/masks/'+x+'.png'
         img = cv2.imread(img, cv2.IMREAD_GRAYSCALE)
-        cropped_image = img[40:386, ]
+        cropped_image = img[26:384, ]
         _, img = cv2.threshold(cropped_image, 5, 255, cv2.THRESH_BINARY)
-        cv2.imwrite('/home/willian/Downloads/masks/'+x+'_mask.png', img)
+        cv2.imwrite('/home/willian/Downloads/masks/'+x+'.png', img)
 
 
 def list_dir_1(dir):
@@ -61,11 +61,10 @@ def delete():
     images = sorted(images)
 
     print(masks)
-    print(images)
+    #print(images)
 
     for i in images:
         if i not in masks:
             os.remove('/home/willian/Downloads/imgs/'+i+'.jpg')
-
 
 make_masks()

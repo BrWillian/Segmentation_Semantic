@@ -6,7 +6,7 @@ import os
 
 
 def simple_generator():
-    i = 9000
+    i = 25000
     while True:
         i += 1
         yield i
@@ -32,7 +32,7 @@ def list_dir(dir):
             data.append(file)
 
     data = list(map(lambda s: s.split('.')[0], data))
-    data = list(map(lambda s: s.split('img_0')[-1], data))
+    data = list(map(lambda s: s.split('_')[-1], data))
 
     return data
 

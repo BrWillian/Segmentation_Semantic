@@ -80,5 +80,5 @@ callbacks = [ModelCheckpoint(monitor='val_loss',
 data_train = list_dir('input/train')
 data_valid = list_dir('input/valid')
 model = unet_256()
-print(model.layers)
-model.fit(train_generator(), callbacks=callbacks, verbose=1, epochs=50, steps_per_epoch=np.ceil(float(len(data_train)) / float(16)), validation_data=valid_generator(), validation_steps=np.ceil(float(len(data_valid)) / float(16)))
+#print(model.layers)
+model.fit(train_generator(), callbacks=callbacks, verbose=1, epochs=100, steps_per_epoch=np.ceil(float(len(data_train)) / float(16)), validation_data=valid_generator(), validation_steps=np.ceil(float(len(data_valid)) / float(16)))

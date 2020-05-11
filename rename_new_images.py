@@ -4,7 +4,7 @@ import sys
 
 
 def gen():
-    i = 9500
+    i = 27000
     while(True):
         i += 1
         yield i
@@ -30,7 +30,7 @@ def rename(dir):
     for img in images:
         id = next(generator)
         os.rename(dir + 'imgs/' + str(img) + '.jpg', dir + 'imgs/' + '{}.jpg'.format(id))
-        os.rename(dir + 'masks/' + str(img) + '-removebg-preview_mask.png', dir + 'masks/' + '{}_mask.png'.format(id))
+        os.rename(dir + 'masks/' + str(img) + '_mask.png', dir + 'masks/' + '{}_mask.png'.format(id))
 
 
 if __name__ == '__main__':

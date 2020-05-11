@@ -5,8 +5,9 @@ import os
 import cv2
 import sys
 import numpy as np
+#from model.model import unet_256
 from model.model import unet_256
-
+import tensorflow as tf
 
 def load_image_for_predict(img, input_size=(256, 256)):
     data = []
@@ -14,11 +15,11 @@ def load_image_for_predict(img, input_size=(256, 256)):
     img_name = list(map(lambda s: s.split('/')[-1], data))
     img_name = list(map(lambda s: s.split('.')[0], img_name))
     img = cv2.imread(img)
-    img = cv2.resize(img, (625, 352))
-    img = img[47:336, ]
+    #img = cv2.resize(img, (625, 352))
+    #img = img[39:336, ]
     img = cv2.resize(img, input_size)
     img = img.reshape((1,) + img.shape)
-    img = np.array(img, np.float32) / 255
+    img = np.array(img, np.float16) / 255
 
     return img, img_name
 
@@ -26,24 +27,18 @@ def load_image_for_predict(img, input_size=(256, 256)):
 def predict(img, output_size=(512, 256)):
 
     model = unet_256()
-    model.load_weights(filepath='weights/best_weights_8.hdf5')
+    model.load_weights(filepath='weights/best_weights_13.hdf5')
 
     x_batch, img_name = load_image_for_predict(img)
 
     preds = model.predict_on_batch(x_batch)
     preds = np.squeeze(preds, axis=3)
-    preds = np.array(preds, np.float32) * 100
+    preds = np.array(preds, np.float32) * 255
     preds = preds.transpose(1, 0, 2).reshape(-1, preds.shape[1])
 
     preds = cv2.resize(preds, output_size)
 
-    p1 = preds[:, 0:172]
-
-    p2 = preds[:, 172:342]
-
-    p3 = preds[:, 342:512]
-
-    cv2.imwrite('predict/new_predict/' + str(img_name[0]) + '_predict.png', preds)
+    cv2.imwrite('predict/mass_predict/masks/erradas/' + str(img_name[0]) + '_predict.png', preds)
     #cv2.imwrite('predict/' + str(img_name[0]) + '_predict_left.png', p1)
     #cv2.imwrite('predict/' + str(img_name[0]) + '_predict_center.png', p2)
     #cv2.imwrite('predict/' + str(img_name[0]) + '_predict_right.png', p3)
@@ -56,7 +51,17 @@ def predict(img, output_size=(512, 256)):
 
 
 if __name__ == "__main__":
-    predict('predict/new_predict/moto3.jpeg')
+    tf.keras.backend.set_floatx(
+        'float16'
+    )
+
+    with tf.device('/cpu:0'):
+
+        for root, path, files in os.walk(sys.argv[1]):
+            for name in files:
+                print(root+name)
+                predict(root+name)
+
 
 
 
