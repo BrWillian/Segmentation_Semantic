@@ -5,3 +5,6 @@ weights/*
 model/
 predict/*
 logs_antigos/*
+*.zip
+.idea/
+result/
