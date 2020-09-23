@@ -3,3 +3,5 @@ input/*
 logs/*
 weights/*
 model/
+predict/*
+logs_antigos/*
